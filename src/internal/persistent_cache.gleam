@@ -5,11 +5,11 @@ const namespace = "persistent_regex"
 type Key =
   #(String, String)
 
-fn namespace_key(key: String) -> #(String, String) {
+fn namespace_key(key: String) -> Key {
   #(namespace, key)
 }
 
-@external(javascript, "persistent_regex_ffi", "get")
+@external(javascript, "../persistent_regex_ffi.mjs", "get")
 pub fn get(key key: String) -> Result(Regex, Nil) {
   key
   |> namespace_key
@@ -19,7 +19,7 @@ pub fn get(key key: String) -> Result(Regex, Nil) {
 @external(erlang, "persistent_regex_ffi", "get")
 fn do_get(key: Key) -> Result(Regex, Nil)
 
-@external(javascript, "persistent_regex_ffi", "put")
+@external(javascript, "../persistent_regex_ffi.mjs", "put")
 pub fn put(key key: String, value value: Regex) -> Nil {
   key
   |> namespace_key
