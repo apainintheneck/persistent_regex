@@ -4,6 +4,11 @@
 
 Initially I assumed that the algorithm would be faster on both the Erlang and JavaScript targets because no caching was taking place for regexes on either platform. This turned out not to be the case.
 
+- Commit: f8aa68de41741a3ce7b25f7a55ea0f8256767c35
+- Gleam: 1.2.1
+- Node.js: 22.4.0
+- Erlang: 27.0
+
 ### Erlang
 
 ```console
