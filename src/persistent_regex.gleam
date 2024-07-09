@@ -1,6 +1,10 @@
 import gleam/regex.{type Regex}
 import internal/persistent_cache
 
+@target(javascript)
+pub const from_string = regex.from_string
+
+@target(erlang)
 pub fn from_string(string: String) -> Result(Regex, regex.CompileError) {
   case persistent_cache.get(key: string) {
     Ok(regex) -> Ok(regex)
