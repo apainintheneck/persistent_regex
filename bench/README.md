@@ -72,4 +72,75 @@ It might not even be worth caching the JavaScript regexes at all. I could just a
 
 ---
 
-### Second Pass
+## Second Pass
+
+I updated the number of regexes to include more of those from the `gleam/regex` tests and the [common_mark](https://github.com/mscharley/gleam-commonmark/commit/ea4770eae9be91b9d135e28c27799c7256c23ebd) library. The regexes in the `common_mark` library are often platform specific but they achieve the same goal and are similar lengths and complexity so I thought it'd be a good test.
+
+- Commit: 9233ed604f204efa433f7a193035b76849ff4eae
+- Gleam: 1.2.1
+- Node.js: 22.4.0
+- Erlang: 27.0
+
+### Erlang
+
+```console
+$ gleam run
+  Compiling persistent_regex
+  Compiling bench
+   Compiled in 1.02s
+    Running bench.main
+benching set x1 regex strings regex
+benching set x1 regex strings persistent_regex
+benching set x10 regex strings regex
+benching set x10 regex strings persistent_regex
+benching set x100 regex strings regex
+benching set x100 regex strings persistent_regex
+benching set x1000 regex strings regex
+benching set x1000 regex strings persistent_regex
+Input                   Function                           IPS             Min            Mean             Max             SD%             P99
+x1 regex strings        regex                       19067.3424          0.0474          0.0524          0.3988         30.9365          0.1011
+x1 regex strings        persistent_regex           166562.3380          0.0053          0.0060          2.1184        131.5610          0.0122
+x10 regex strings       regex                        1943.5685          0.4548          0.5145          0.9031          9.9341          0.7113
+x10 regex strings       persistent_regex            18862.2440          0.0485          0.0530          0.2381         13.0762          0.0931
+x100 regex strings      regex                         203.7703          4.6443          4.9074          5.3152          2.8267          5.2644
+x100 regex strings      persistent_regex             1906.7968          0.4868          0.5244          0.7533          5.5787          0.6184
+x1000 regex strings     regex                          20.2695         48.6569         49.3350         50.3676          0.9857         50.3676
+x1000 regex strings     persistent_regex              189.8695          5.0279          5.2667          6.5729          3.1896          5.7742
+```
+
+The cached regexes seem to be an order of magnitude faster consistently regardless of the number of regexes.
+
+### JavaScript
+
+Caching regexes doesn't seem to help on Node.js in any meaningful way.
+
+```console
+$ gleam run --target javascript
+  Compiling persistent_regex
+  Compiling bench
+   Compiled in 0.02s
+    Running bench.main
+benching set x1 regex strings regex
+benching set x1 regex strings persistent_regex
+benching set x10 regex strings regex
+benching set x10 regex strings persistent_regex
+benching set x100 regex strings regex
+benching set x100 regex strings persistent_regex
+benching set x1000 regex strings regex
+benching set x1000 regex strings persistent_regex
+Input                   Function                           IPS             Min            Mean             Max             SD%             P99
+x1 regex strings        regex                       16616.1650          0.0541          0.0601          3.7717         56.6585          0.0794
+x1 regex strings        persistent_regex            14637.6075          0.0634          0.0683          0.8030         25.7331          0.0879
+x10 regex strings       regex                        1736.4720          0.5279          0.5758          1.1660          6.3075          0.6878
+x10 regex strings       persistent_regex             1500.6805          0.6110          0.6663          1.0968          5.8976          0.8292
+x100 regex strings      regex                         168.0465          5.1654          5.9507          6.7137          3.4169          6.6086
+x100 regex strings      persistent_regex              147.1994          6.2049          6.7935          7.2398          2.5027          7.2166
+x1000 regex strings     regex                          16.8680         53.7798         59.2836         60.4718          2.5597         60.4718
+x1000 regex strings     persistent_regex               14.9039         62.3612         67.0965         68.6988          2.1776         68.6988
+```
+
+This benchmark is tricky to read because whichever function is tested first tests a bit faster but ultimately it shows that caching doesn't help here.
+
+### Conclusion
+
+Caching is really only necessary on the Erlang side and not needed on JavaScript at all.
