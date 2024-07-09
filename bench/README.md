@@ -1,5 +1,7 @@
 # Benchmarking
 
+---
+
 ## First Pass
 
 Initially I assumed that the algorithm would be faster on both the Erlang and JavaScript targets because no caching was taking place for regexes on either platform. This turned out not to be the case.
@@ -67,3 +69,7 @@ Surprisingly it is actually slower with the JavaScript cache here which is very 
 ### Conclusion
 
 It might not even be worth caching the JavaScript regexes at all. I could just alias the `persistent_regex.from_string` method so that it calls the `regex.from_string` method directly instead. I also think it'd be helpful to test more varied regexes to see if that ends up making the Erlang approach less convincing. It'd also be nice to add the ability to clear the cache for testing purposes (that'd have to be well documented though).
+
+---
+
+### Second Pass
